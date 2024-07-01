@@ -1,0 +1,176 @@
+<html>
+<head>
+
+	<title>Colors</title>
+
+	<style type="text/css">
+		body {
+			background: black;
+			color: white;
+			margin: 0;
+			padding: 1px;
+		}
+		table {
+			border: none;
+			border-spacing: 0;
+			border-collapse: collapse;
+			margin: 0;
+			padding: 0;
+		}
+		table td {
+			border: 0px dashed gray;
+			margin: 0;
+			padding: 0;
+			text-align: center;
+			vertical-align: middle;
+		}
+		table tr {
+			margin: 0;
+			padding: 0;
+		}
+		.button {
+			background: black;
+			color: white;
+			border: none;
+			margin: 0;
+			padding: 0;
+			text-shadow: black 0 0 1px;
+		}
+		.cbutton {
+			width: 5em;
+			height: 5em;
+		}
+		.hbutton {
+			height: 5em;
+		}
+		.vbutton {
+			width: 5em;
+		}
+		.stretch {
+			width: 100%;
+			height: 100%;
+		}
+		.hstretch {
+			width: 100%;
+		}
+		.vstretch {
+			height: 100%;
+		}
+	</style>
+
+	<script type="text/javascript">
+
+		// https://en.wikipedia.org/wiki/EBU_colour_bars
+
+		let colors = [
+			'#ffffff',
+			'#ffff00',
+			'#00ffff',
+			'#00ff00',
+			'#ff00ff',
+			'#ff0000',
+			'#0000ff',
+			'#000000',
+			'#808080',		
+		];
+
+		let colorx = 0;
+
+		function clamp(n, min, max) {
+			return Math.min(Math.max(n, min), max);
+		}
+
+		function mod(n, m) {
+			return ((n % m) + m) % m;
+		}
+
+		function color(i) {
+			if (i < 0) {
+				colorx = mod(colorx - 1, colors.length);
+			}
+			else if (i >= colors.length) {
+				colorx = mod(colorx + 1, colors.length);
+			}
+			else {
+				colorx = i;
+			}
+			colorx = clamp(colorx, 0, colors.length);
+			document.getElementById('color').style.backgroundColor =
+				(colors.length > 0) ? colors[colorx] : 'black';
+		}
+
+		function reset() {
+			console.log('TODO');
+		}
+
+		function bootstrap() {
+			let oldButtons = document.getElementById('buttons');
+			let newButtons = [];
+			for (let i = 0; i < colors.length; i++) {
+				const button = document.createElement('button');
+				button.innerHTML = (i+1).toString();
+				button.style.backgroundColor = colors[i];
+				button.setAttribute('class', 'button cbutton');
+				button.onclick = function () { color(i); };
+				newButtons.push(button);
+			}
+			oldButtons.replaceChildren(...newButtons);
+			color(colorx);
+			document.body.onkeydown = function(e) {
+				if (49 <= e.keyCode && e.keyCode <= 57) {
+					let i = parseInt(String.fromCharCode(e.keyCode)) - 1;
+					if (i < colors.length) {
+						color(i);
+					}
+				}
+				if (e.keyCode == 37 || e.keyCode == 40) {
+					color(-colors.length);
+				}
+				if (e.keyCode == 39 || e.keyCode == 38) {
+					color(+colors.length);
+				}
+				if (e.keyCode == 8) {
+					color(-colors.length);
+				}
+				if (e.keyCode == 13 || e.keyCode == 32) {
+					color(+colors.length);
+				}
+				if (e.keyCode == 190) {
+					console.log('TODO');
+				}
+			};
+		}
+
+	</script>
+
+</head>
+<body onload="bootstrap()">
+
+	<table class="stretch">
+		<tr>
+			<td></td>
+			<td id="buttons"></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>
+				<button type="button" class="button vbutton vstretch" onclick="color(-colors.length)">&laquo;</button>
+			</td>
+			<td class="stretch">
+				<div id="color" class="stretch"></div>
+			</td>
+			<td>
+				<button type="button" class="button vbutton vstretch" onclick="color(+colors.length)">&raquo;</button>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<button type="button" class="button hbutton hstretch" onclick="reset()"><!--&hellip;--></button>
+			</td>
+			<td></td>
+		</tr>
+	</table>
+
+</body>
+</html>
